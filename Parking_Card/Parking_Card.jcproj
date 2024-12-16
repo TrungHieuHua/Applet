@@ -1,0 +1,12 @@
+<JavaCardProject name="Parking_Card">
+<USER>
+<PKG name="ParkingCard" aid="11 22 33 44 55" major="1" minor="0">
+<APPLET aid="11 22 33 44 55 00" instanceaid="" parameter="" authority="" privileges="" index="-26056" name="ParkingCard"/>
+<CLASS name="Account"/>
+<CLASS name="CipherUtils"/>
+<CLASS name="Image"/>
+<CLASS name="PIN"/>
+</PKG>
+<Libs/>
+</USER>
+</JavaCardProject>
