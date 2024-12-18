@@ -60,22 +60,6 @@ public class PIN {
         this.pin =  CipherUtils.hashPin(rawPin, this.salt);
         attemptsLeft = maxAttempts;  // Reset s ln th còn li
     }
-
-   
-    // public void setPin(byte[] newPin, short offset, short length) {
-        // if (newPin == null) {
-            // ISOException.throwIt(ISO7816.SW_DATA_INVALID);
-        // }
-        // if (length < 6 || length > 10) {
-            // ISOException.throwIt(ISO7816.SW_WRONG_LENGTH); 
-        // }
-        // byte[] rawPin= new byte[length];
-        // Util.arrayCopy(newPin, offset, rawPin, (short)0, length);
-        // this.isLock = false;
-        // this.salt = randomSalt();
-        // this.pin =  CipherUtils.hashPin(rawPin, this.salt);
-        // attemptsLeft = maxAttempts; 
-    // }
    
     private static byte[] randomSalt() throws ISOException {
    

@@ -201,28 +201,35 @@ public class ParkingCard extends Applet implements ExtendedLength {
 	 }
 	 //luu anh xuon the
 	 private void receiveImage(APDU apdu) {
-        byte[] buffer = apdu.getBuffer();
-        short recvLen = apdu.setIncomingAndReceive();
-        short dataOffset = apdu.getOffsetCdata();
+		byte[] buffer = apdu.getBuffer();
+		short recvLen = apdu.setIncomingAndReceive();
+		short dataOffset = apdu.getOffsetCdata();
 
-        while (recvLen > 0) {
-            image.storeImage(buffer, dataOffset, recvLen);
-            recvLen = apdu.receiveBytes(dataOffset);
-        }
-    }
+		Util.arrayFillNonAtomic(image.imageData, (short) 0, (short) image.imageData.length, (byte) 0x00);
+		image.dataLength = 0;
+		image.realLength = 0;
 
-    // Gi d liu nh v máy tính
-    private void sendImage(APDU apdu) {
-        short dataLength = image.getImageLength();
-        short le = apdu.setOutgoing();
-        apdu.setOutgoingLength(dataLength);
+		while (recvLen > 0) {
+			image.storeImage(buffer, dataOffset, recvLen);
+			recvLen = apdu.receiveBytes(dataOffset);
+		}
+	
+		short remainingSpace = (short)(5120 - image.dataLength);
+		if (remainingSpace > 0) {
+			Util.arrayFillNonAtomic(image.imageData, image.dataLength, remainingSpace, (byte) 0x00);
+			image.dataLength = (short) 5120;
+		}
+		// ma hoa
+		byte[] rawKey = CipherUtils.decryptAES(AES_KEY, pin.getPin());
+        CipherUtils.encryptAES(image.imageData, rawKey, image.imageData);
+	}
 
-        short pointer = 0;
-        while (dataLength > 0) {
-            short sendLen = (short) ((dataLength > le) ? le : dataLength);
-            apdu.sendBytesLong(image.imageData, pointer, sendLen);
-            pointer += sendLen;
-            dataLength -= sendLen;
-        }
-    }
- }
+	private void sendImage(APDU apdu) {
+		byte[] buffer = apdu.getBuffer();	
+		byte[] rawKey = CipherUtils.decryptAES(AES_KEY, pin.getPin()); // Khóa gii mã
+		byte[] decryptedData = CipherUtils.decryptAES(image.imageData, rawKey);
+		apdu.setOutgoing();
+		apdu.setOutgoingLength(image.realLength);
+		apdu.sendBytesLong(decryptedData, (short) 0, image.realLength);
+	}
+}

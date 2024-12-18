@@ -69,7 +69,7 @@ public class CipherUtils {
         try {
 
             MessageDigest md = MessageDigest.getInstance(MessageDigest.ALG_MD5, false);
-            short iterations = 100;
+            short iterations = 10;
 
             byte[] combined = new byte[(short) (rawPin.length + salt.length)];
             Util.arrayCopy(rawPin, (short) 0, combined, (short) 0, (short) rawPin.length);
@@ -84,7 +84,6 @@ public class CipherUtils {
                 Util.arrayCopy(hash, (short) 0, storage, (short) 0, (short) hash.length);
                 md.doFinal(storage, (short) 0, (short) storage.length, hash, (short) 0);
             }
-
             return hash;  
         } catch (Exception e) {
             ISOException.throwIt(ISO7816.SW_UNKNOWN);
@@ -129,7 +128,6 @@ public class CipherUtils {
 	
 }
 
-    
     
     private static byte[] random() throws ISOException {
    
