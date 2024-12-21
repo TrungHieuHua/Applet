@@ -10,10 +10,11 @@ public class PIN {
     private final byte maxAttempts = 3; 
     private byte attemptsLeft;
     public boolean isLock;
+    public CipherUtils cipherUtils;
 
-    public PIN() {
+    public PIN(CipherUtils cipherUtils) {
+    	this.cipherUtils = cipherUtils;
     	this.isLock = false;
-	    this.salt = randomSalt();
 	    this.attemptsLeft = -1;
     }
     
@@ -30,7 +31,7 @@ public class PIN {
 		}
 		byte[] rawPin = new byte[length];
 		Util.arrayCopy(inputPin, offset, rawPin, (short) 0, length);
-		byte[] hashedInputPin = CipherUtils.hashPin(rawPin, this.salt);
+		byte[] hashedInputPin = cipherUtils.hashPin(rawPin, this.salt);
 		short check = Util.arrayCompare(this.pin, (short) 0, hashedInputPin, (short) 0, (short) this.pin.length);
 		if (check == 0) {
 			attemptsLeft = maxAttempts; 
@@ -57,12 +58,11 @@ public class PIN {
         Util.arrayCopy(newPin, offset, rawPin, (short)0, length);
         this.isLock = false;
         this.salt = randomSalt();
-        this.pin =  CipherUtils.hashPin(rawPin, this.salt);
-        attemptsLeft = maxAttempts;  // Reset s ln th còn li
+        this.pin =  cipherUtils.hashPin(rawPin, this.salt);
+        attemptsLeft = maxAttempts;  
     }
    
     private static byte[] randomSalt() throws ISOException {
-   
 		byte[] salt = new byte[16];
 		RandomData randomData = RandomData.getInstance(RandomData.ALG_SECURE_RANDOM);
 		randomData.generateData(salt, (short) 0, (short) salt.length);
@@ -79,6 +79,12 @@ public class PIN {
 	
     public byte getPinLength(){
 	    return (byte)pin.length;
+    }
+    
+    public void unLockCard()
+    {
+	    this.isLock = false;
+	    attemptsLeft = maxAttempts;
     }
     
     public void lockCard()

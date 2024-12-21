@@ -14,19 +14,10 @@ class Image {
         realLength = 0;
     }
     
-
     public void storeImage(byte[] buffer, short offset, short length) {
         Util.arrayCopy(buffer, offset, imageData, dataLength, length);
         dataLength += length;
         realLength += length;
-    }
-  
-
-
-    public short readImage(byte[] buffer, short offset, short maxLength) {
-        short copyLength = (short) ((dataLength > maxLength) ? maxLength : dataLength);
-        Util.arrayCopy(imageData, (short) 0, buffer, offset, copyLength);
-        return copyLength;
     }
 
     public short getImageLength() {
