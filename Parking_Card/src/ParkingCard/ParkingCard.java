@@ -291,28 +291,22 @@ public class ParkingCard extends Applet implements ExtendedLength {
         apdu.sendBytesLong(publicKey, (short)0, (short) publicKey.length);
     }
     
-    private void authenticate(APDU apdu) {
+    
+	private void authenticate(APDU apdu) {
+
 		byte[] buffer = apdu.getBuffer();
-		apdu.setIncomingAndReceive();
+		short dataLength = apdu.setIncomingAndReceive();
 		RSAPrivateKey rawPrivateKey = restoreRSAPrivateKey(privateKey);
-		short dataLength = apdu.getIncomingLength();
-		byte[] rawMessage = new byte[(short)16];
-		short len = (short) (dataLength - 16);
-		byte[] encryptMessage = new byte[len];
-		Util.arrayCopy(buffer, ISO7816.OFFSET_CDATA , rawMessage, (short) 0, (short)16);
-		Util.arrayCopy(buffer, (short)(ISO7816.OFFSET_CDATA + 16), encryptMessage, (short) 0, len);
-        byte[] data = new byte[(short)128]; 
-        cipher.init(rawPrivateKey, Cipher.MODE_DECRYPT);
-        short decryptedLength = cipher.doFinal(encryptMessage, (short) 0, len, data, (short) 0);
-        byte[] decryptedData  =new byte[decryptedLength];
-        Util.arrayCopy(data, (short) 0, decryptedData, (short)0, decryptedLength); 
-        short check = Util.arrayCompare(rawMessage, (short)0, decryptedData, (short)0, decryptedLength);
-        if (check == 0) {
-             ISOException.throwIt((short) 0x9000); 
-         } else {
-             ISOException.throwIt((short) 0x6984); 
-        }
-    }
+		byte[] rawMessage = new byte[dataLength];
+		Util.arrayCopy(buffer, ISO7816.OFFSET_CDATA, rawMessage, (short) 0, (short) 16);
+		byte[] encryptedData = new byte[128]; 
+		cipher.init(rawPrivateKey, Cipher.MODE_ENCRYPT);
+		short encryptedLength = cipher.doFinal(rawMessage, (short) 0, (short) 16, encryptedData, (short) 0);
+		apdu.setOutgoing();
+		apdu.setOutgoingLength(encryptedLength);
+		apdu.sendBytesLong(encryptedData, (short) 0, encryptedLength);
+	}
+
     
     private void storePrivateKey(RSAPrivateKey rsaPrivateKey) {
 		short keyLength = 0;
@@ -351,6 +345,5 @@ public class ParkingCard extends Applet implements ExtendedLength {
              }
     }
     return true; }
-    
-    
+      
 }

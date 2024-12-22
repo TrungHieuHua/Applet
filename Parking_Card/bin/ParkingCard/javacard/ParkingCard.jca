@@ -1,5 +1,5 @@
 // converted by version 1.3
-// on Fri Dec 20 09:06:41 ICT 2024
+// on Sun Dec 22 12:17:02 ICT 2024
 
 .package ParkingCard {
 	.aid 0x11:0x22:0x33:0x44:0x55;
@@ -290,8 +290,6 @@
 		staticMethodRef ParkingCard/restoreRSAPrivateKey([B)Ljavacard/security/RSAPrivateKey;;
 			.descriptor	Ljavacard/security/RSAPrivateKey;	3.8;
 
-		// 114
-		virtualMethodRef 1.10.15()S;		// getIncomingLength()S
 	}
 
 	.class public Account 0 extends 0.0 {		// extends java/lang/Object
@@ -1872,7 +1870,7 @@
 
 		.method private authenticate(Ljavacard/framework/APDU;)V {
 			.stack 6;
-			.locals 10;
+			.locals 6;
 
 			.descriptor	Ljavacard/framework/APDU;	1.10;
 
@@ -1881,78 +1879,48 @@
 					astore_2;
 				L1:	aload_1;
 					invokevirtual 77;		// setIncomingAndReceive()S
-					pop;
-					aload_0;
+					sstore_3;
+				L2:	aload_0;
 					getfield_a_this 20;		// reference ParkingCard/ParkingCard.privateKey
 					invokespecial 113;		// ParkingCard/ParkingCard.restoreRSAPrivateKey([B)Ljavacard/security/RSAPrivateKey;
-					astore_3;
-				L2:	aload_1;
-					invokevirtual 114;		// getIncomingLength()S
-					sstore 4;
-				L3:	bspush 16;
+					astore 4;
+				L3:	sload_3;
 					newarray 11;
 					astore 5;
-				L4:	sload 4;
-					bspush 16;
-					ssub;
-					sstore 6;
-				L5:	sload 6;
-					newarray 11;
-					astore 7;
-				L6:	aload_2;
+				L4:	aload_2;
 					sconst_5;
 					aload 5;
 					sconst_0;
 					bspush 16;
 					invokestatic 29;		// javacard/framework/Util.arrayCopy([BS[BSS)S
 					pop;
-					aload_2;
-					bspush 21;
-					aload 7;
-					sconst_0;
-					sload 6;
-					invokestatic 29;		// javacard/framework/Util.arrayCopy([BS[BSS)S
-					pop;
 					sspush 128;
 					newarray 11;
-					astore 8;
-				L7:	getfield_a_this 25;		// reference ParkingCard/ParkingCard.cipher
-					aload_3;
-					sconst_1;
+					astore 6;
+				L5:	getfield_a_this 25;		// reference ParkingCard/ParkingCard.cipher
+					aload 4;
+					sconst_2;
 					invokevirtual 37;		// init(Ljavacard/security/Key;B)V
 					getfield_a_this 25;		// reference ParkingCard/ParkingCard.cipher
-					aload 7;
-					sconst_0;
-					sload 6;
-					aload 8;
-					sconst_0;
-					invokevirtual 45;		// doFinal([BSS[BS)S
-					sstore 9;
-				L8:	sload 9;
-					newarray 11;
-					astore 10;
-				L9:	aload 8;
-					sconst_0;
-					aload 10;
-					sconst_0;
-					sload 9;
-					invokestatic 29;		// javacard/framework/Util.arrayCopy([BS[BSS)S
-					pop;
 					aload 5;
 					sconst_0;
-					aload 10;
+					bspush 16;
+					aload 6;
 					sconst_0;
-					sload 9;
-					invokestatic 38;		// javacard/framework/Util.arrayCompare([BS[BSS)B
-					sstore 11;
-				L10:	sload 11;
-					ifne L12;
-				L11:	sspush -28672;
-					invokestatic 46;		// javacard/framework/ISOException.throwIt(S)V
-					goto L13;
-				L12:	sspush 27012;
-					invokestatic 46;		// javacard/framework/ISOException.throwIt(S)V
-				L13:	return;
+					invokevirtual 45;		// doFinal([BSS[BS)S
+					sstore 7;
+				L6:	aload_1;
+					invokevirtual 91;		// setOutgoing()S
+					pop;
+					aload_1;
+					sload 7;
+					invokevirtual 92;		// setOutgoingLength(S)V
+					aload_1;
+					aload 6;
+					sconst_0;
+					sload 7;
+					invokevirtual 93;		// sendBytesLong([BSS)V
+					return;
 		}
 
 		.method private storePrivateKey(Ljavacard/security/RSAPrivateKey;)V {
