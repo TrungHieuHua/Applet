@@ -1,5 +1,5 @@
 // converted by version 1.3
-// on Sun Dec 22 12:17:02 ICT 2024
+// on Tue Dec 31 00:58:33 ICT 2024
 
 .package ParkingCard {
 	.aid 0x11:0x22:0x33:0x44:0x55;
@@ -1202,7 +1202,9 @@
 					if_scmpne L6;
 				L5:	getfield_a_this 26;		// reference ParkingCard/ParkingCard.pin
 					invokevirtual 64;		// unLockCard()V
-					return;
+					sspush -28672;
+					invokestatic 46;		// javacard/framework/ISOException.throwIt(S)V
+					goto L7;
 				L6:	sspush 27904;
 					invokestatic 46;		// javacard/framework/ISOException.throwIt(S)V
 				L7:	getfield_a_this 26;		// reference ParkingCard/ParkingCard.pin

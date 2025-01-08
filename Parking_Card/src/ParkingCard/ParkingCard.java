@@ -62,7 +62,7 @@ public class ParkingCard extends Applet implements ExtendedLength {
         if (buffer[ISO7816.OFFSET_CLA] == (byte)0xA0) {
 			if (buffer[ISO7816.OFFSET_INS] == INS_UNLOCK) {
 				pin.unLockCard();
-				return;
+				ISOException.throwIt((short) 0x9000);
 			} else {
             ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
 			}
@@ -166,15 +166,15 @@ public class ParkingCard extends Applet implements ExtendedLength {
 		  byte[] money = account.getMoney();
 		  byte[] rawPrivateKey = cipherUtils.decryptAES(privateKey, rawKey);
 		  byte[] rawImage = cipherUtils.decryptAES(image.imageData, rawKey);// gia ma anh
-		  account.readData(data, (short)0 ); // c d liu lên mng data
+		  account.readData(data, (short)0 ); 
 		  data = cipherUtils.decryptAES(data, rawKey);
 		  money = cipherUtils.decryptAES(money, rawKey);
           pin.setPin(buffer, ISO7816.OFFSET_CDATA, dataLength);
           generateKeyAes();
           byte[] newRawKey = cipherUtils.decryptAES(AES_KEY, pin.getPin());
-          cipherUtils.encryptAES(money, newRawKey, money); // mã hóa tin
+          cipherUtils.encryptAES(money, newRawKey, money); 
           cipherUtils.encryptAES(data, newRawKey, data); // mã hóa thông tin
-          account.saveData(data, (short) 0); // luu li thong tin
+          account.saveData(data, (short) 0); // luu lai thong tin
           account.saveMoney(money, (short)0); // luu lai tien
 		  cipherUtils.encryptAES(rawPrivateKey, newRawKey, privateKey);// mã hóa private key
 		  cipherUtils.encryptAES(rawImage, newRawKey, image.imageData); // mã hóa nh
